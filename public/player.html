@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>Player</title>
+<style>
+html,body{margin:0;height:100%;background:#000;overflow:hidden;cursor:none}
+#stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+#stage img,#stage video{width:100%;height:100%;object-fit:contain;animation:f .6s}
+@keyframes f{from{opacity:0}to{opacity:1}}
+#msg{color:#666;font:20px sans-serif;text-align:center}
+</style></head><body>
+<div id="stage"><div id="msg">Carregando...</div></div>
+<script>
+// Uso: /player.html?d=TOKEN_DO_TABLET  (o token fica salvo para a próxima abertura)
+const q = new URLSearchParams(location.search);
+if (q.get('d')) localStorage.setItem('token', q.get('d'));
+const TOKEN = localStorage.getItem('token');
+const stage = document.getElementById('stage');
+const CACHE = 'ads-v1';
+let items = [], idx = 0, timer = null, plays = {};
+
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');
+try { navigator.wakeLock?.request('screen'); document.addEventListener('visibilitychange', () => navigator.wakeLock?.request('screen').catch(()=>{})); } catch {}
+
+async function sync() {
+  try {
+    const r = await fetch('/api/playlist/' + TOKEN, { cache: 'no-store' });
+    if (!r.ok) throw 0;
+    const data = await r.json();
+    localStorage.setItem('playlist', JSON.stringify(data.items));
+    // baixa mídias novas e apaga as que saíram do ar (anúncios vencidos)
+    const c = await caches.open(CACHE), keep = new Set(data.items.map(i => i.url));
+    for (const i of data.items) if (!(await c.match(i.url))) { try { await c.add(i.url); } catch {} }
+    for (const k of await c.keys()) if (!keep.has(k.url) && !keep.has(new URL(k.url).pathname)) c.delete(k);
+    items = data.items;
+  } catch { items = JSON.parse(localStorage.getItem('playlist') || '[]'); } // offline: usa a última lista
+}
+async function flush() {
+  const list = Object.entries(plays).map(([id, n]) => ({ id, n }));
+  if (!list.length) { fetch('/api/log/' + TOKEN, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }).catch(()=>{}); return; }
+  plays = {};
+  try { await fetch('/api/log/' + TOKEN, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ plays: list }) }); }
+  catch { for (const p of list) plays[p.id] = (plays[p.id] || 0) + p.n; }
+}
+async function srcFor(url) {
+  const c = await caches.open(CACHE), m = await c.match(url);
+  return m ? URL.createObjectURL(await m.blob()) : url;
+}
+async function next() {
+  clearTimeout(timer);
+  if (!items.length) { stage.innerHTML = '<img src="/logo.webp" style="width:60%;height:auto;object-fit:contain">'; timer = setTimeout(next, 10000); return; }
+  const it = items[idx++ % items.length];
+  const src = await srcFor(it.url), el = document.createElement(it.type === 'video' ? 'video' : 'img');
+  if (it.type === 'video') { el.muted = true; el.autoplay = true; el.loop = true; el.playsInline = true; }
+  el.src = src;
+  el.onerror = () => { timer = setTimeout(next, 1000); };
+  stage.innerHTML = ''; stage.appendChild(el);
+  plays[it.id] = (plays[it.id] || 0) + 1;
+  timer = setTimeout(() => { if (src.startsWith('blob:')) URL.revokeObjectURL(src); next(); }, it.duration * 1000);
+}
+(async () => {
+  if (!TOKEN) { document.getElementById('msg').textContent = 'Tablet não configurado (falta ?d=TOKEN)'; return; }
+  await sync(); next();
+  setInterval(sync, 300000);   // atualiza a lista a cada 5 min
+  setInterval(flush, 300000);
+})();
+</script></body></html>

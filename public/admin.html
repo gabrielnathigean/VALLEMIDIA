@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ValleMídia · Painel</title><link rel="icon" href="/logo.webp">
+<style>
+:root{--bg:#0d0d10;--s1:#16161b;--s2:#1e1e25;--s3:#282831;--b:#2a2a33;--t:#f4f4f6;--m:#9a9aa6;
+--or:#ff8a00;--am:#ffaa00;--de:#ff6b00;--g:linear-gradient(135deg,#ffaa00,#ff6b00);--ok:#22c55e;--w:#f59e0b;--e:#ef4444;--r:14px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font:15px/1.45 'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t);min-height:100vh}
+button,input,select,textarea{font:inherit;color:inherit}
+input,select,textarea{background:var(--s2);border:1px solid var(--b);border-radius:10px;padding:10px 12px;width:100%;outline:0;transition:.15s}
+input:focus,select:focus,textarea:focus{border-color:var(--or);box-shadow:0 0 0 3px #ff8a0030}
+select[multiple]{padding:6px}input[type=checkbox]{width:auto}
+label.f{display:block;font-size:12.5px;color:var(--m);font-weight:500}label.f>*:last-child{margin-top:5px;color:var(--t);font-weight:400}
+button{cursor:pointer;border:1px solid var(--b);background:var(--s2);border-radius:10px;padding:9px 14px;transition:.15s;white-space:nowrap}
+button:hover{background:var(--s3)}button:disabled{opacity:.5;cursor:wait}
+button.p{background:var(--g);border:0;color:#1a0d00;font-weight:600}button.p:hover{filter:brightness(1.1)}
+button.d{color:#ff7b7b}button.sm{padding:6px 10px;font-size:13px}button.ic{padding:6px 9px}
+a{color:var(--am)}
+/* layout */
+#app{display:flex;min-height:100vh}
+aside{width:236px;background:var(--s1);border-right:1px solid var(--b);padding:18px 14px;display:flex;flex-direction:column;gap:4px;position:sticky;top:0;height:100vh;flex-shrink:0}
+aside img.logo{width:100%;margin:2px 0 14px;padding:0 4px}
+aside .nb{display:flex;align-items:center;gap:11px;width:100%;text-align:left;border:0;background:none;color:var(--m);padding:11px 12px;border-radius:11px;font-weight:500}
+aside .nb:hover{background:var(--s2);color:var(--t)}aside .nb.on{background:#ff8a001c;color:var(--am)}
+aside .nb svg{width:19px;height:19px;flex-shrink:0}
+.badge{margin-left:auto;background:var(--e);color:#fff;border-radius:99px;font-size:11px;padding:1px 7px;font-weight:600}
+.me{margin-top:auto;padding:12px;background:var(--s2);border-radius:12px;font-size:13px}
+.me b{display:block}.me span{color:var(--m)}
+.content{flex:1;min-width:0;padding:26px 30px 60px;max-width:1280px}
+.top{display:flex;align-items:center;gap:12px;margin-bottom:22px;flex-wrap:wrap}
+.top h1{margin:0;font-size:24px;letter-spacing:-.3px;margin-right:auto}
+.card{background:var(--s1);border:1px solid var(--b);border-radius:var(--r);padding:18px;margin-bottom:16px}
+.card h3{margin:0 0 14px;font-size:15px;display:flex;align-items:center;gap:8px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:16px}
+.kpi{background:var(--s1);border:1px solid var(--b);border-radius:var(--r);padding:16px;position:relative;overflow:hidden}
+.kpi:before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:var(--g)}
+.kpi .v{font-size:27px;font-weight:700;letter-spacing:-.5px}.kpi .l{color:var(--m);font-size:13px}
+.kpi.warn:before{background:var(--w)}.kpi.bad:before{background:var(--e)}.kpi.good:before{background:var(--ok)}
+.cols{display:grid;grid-template-columns:1.4fr 1fr;gap:16px}
+.tw{overflow-x:auto}table{width:100%;border-collapse:collapse}
+th{text-align:left;color:var(--m);font-weight:500;font-size:12px;text-transform:uppercase;letter-spacing:.5px;padding:8px 8px;border-bottom:1px solid var(--b)}
+td{padding:11px 8px;border-bottom:1px solid #22222a;vertical-align:middle}tr:last-child td{border:0}
+tr:hover td{background:#ffffff05}
+.tag{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:99px;font-size:12px;font-weight:600;white-space:nowrap}
+.t-ativo{background:#22c55e22;color:#4ade80}.t-soon{background:#f59e0b22;color:#fbbf24}.t-vencido{background:#ef444422;color:#f87171}
+.t-pausado,.t-agendado{background:#9a9aa622;color:#b4b4bf}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--m);display:inline-block}.dot.on{background:var(--ok);box-shadow:0 0 0 4px #22c55e25}.dot.off{background:var(--e)}
+.thumb{width:78px;height:46px;object-fit:cover;border-radius:8px;background:#000;cursor:pointer;display:block;border:1px solid var(--b)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.m{color:var(--m);font-size:13px}.grow{flex:1;min-width:160px}
+.empty{text-align:center;color:var(--m);padding:30px 10px}
+.bars{display:flex;align-items:flex-end;gap:6px;height:150px}
+.bar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:5px;font-size:11px;color:var(--m)}
+.bar i{display:block;width:100%;background:var(--g);border-radius:6px 6px 2px 2px;min-height:3px}
+.item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #22222a}.item:last-child{border:0}
+.grid3{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px}
+.dev{background:var(--s1);border:1px solid var(--b);border-radius:var(--r);padding:16px}
+code{background:var(--s2);padding:4px 8px;border-radius:7px;font-size:12px;word-break:break-all;display:block;margin:10px 0;color:var(--am)}
+/* modal / toast */
+#ov{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;padding:16px;z-index:50;backdrop-filter:blur(4px)}
+#ov.on{display:flex}#mo{background:var(--s1);border:1px solid var(--b);border-radius:18px;padding:22px;width:100%;max-width:560px;max-height:92vh;overflow:auto}
+#mo.wide{max-width:860px}#mo h2{margin:0 0 16px;font-size:19px}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:12px}.fg .full{grid-column:1/-1}
+#toasts{position:fixed;right:16px;bottom:16px;display:flex;flex-direction:column;gap:8px;z-index:99}
+.toast{background:var(--s3);border-left:4px solid var(--ok);padding:12px 16px;border-radius:10px;box-shadow:0 8px 30px #0008;animation:in .25s}.toast.err{border-color:var(--e)}
+@keyframes in{from{transform:translateY(10px);opacity:0}}
+.drop{border:2px dashed var(--b);border-radius:12px;padding:22px;text-align:center;color:var(--m);cursor:pointer;transition:.15s}
+.drop:hover,.drop.over{border-color:var(--or);background:#ff8a000d;color:var(--t)}
+.prog{height:8px;background:var(--s3);border-radius:9px;overflow:hidden;margin-top:12px;display:none}.prog i{display:block;height:100%;width:0;background:var(--g);transition:width .2s}
+.chk{display:flex;flex-wrap:wrap;gap:8px}.chk label{display:flex;gap:6px;align-items:center;background:var(--s2);padding:6px 10px;border-radius:9px;font-size:13px;cursor:pointer}
+/* login */
+#login{min-height:100vh;display:none;align-items:center;justify-content:center;padding:20px;
+background:radial-gradient(900px 500px at 15% 10%,#ff8a0026,transparent),radial-gradient(700px 500px at 90% 95%,#ff6b0022,transparent),var(--bg)}
+.lbox{width:100%;max-width:400px;background:#16161bcc;border:1px solid var(--b);border-radius:22px;padding:34px 30px;backdrop-filter:blur(10px);box-shadow:0 30px 80px #000a}
+.lbox img{width:100%;margin-bottom:6px}.lbox p{text-align:center;color:var(--m);margin:0 0 24px}
+.lbox .row{flex-direction:column;align-items:stretch;gap:12px}.lbox button{padding:13px;font-size:16px}
+.err{color:#f87171;font-size:13px;min-height:18px;text-align:center}
+.pw{position:relative}.pw button{position:absolute;right:4px;top:4px;border:0;background:none;padding:6px 10px;color:var(--m)}
+@media(max-width:900px){
+ #app{flex-direction:column}
+ aside{width:100%;height:auto;position:sticky;z-index:20;flex-direction:row;align-items:center;overflow-x:auto;padding:8px 10px;gap:4px;border-right:0;border-bottom:1px solid var(--b)}
+ aside img.logo{width:110px;margin:0 8px 0 0;flex-shrink:0}.me{display:none}aside .nb{width:auto;padding:9px 11px;flex-shrink:0}aside .nb span.tx{display:none}aside .nb.on span.tx{display:inline}
+ .content{padding:18px 14px 60px}.cols{grid-template-columns:1fr}.fg{grid-template-columns:1fr}}
+</style></head><body>
+<div id="login"><form class="lbox" onsubmit="login(event)">
+  <img src="/logo.webp" alt="ValleMídia"><p>Painel de gerenciamento de anúncios</p>
+  <div class="row"><input id="u" placeholder="Usuário" autocomplete="username" required autofocus>
+  <div class="pw"><input id="p" type="password" placeholder="Senha" autocomplete="current-password" required><button type="button" onclick="p.type=p.type=='password'?'text':'password'">👁</button></div>
+  <div class="err" id="le"></div><button class="p" id="lb">Entrar</button></div></form></div>
+<div id="app" hidden>
+<aside id="side"></aside>
+<div class="content" id="main"></div></div>
+<div id="ov" onmousedown="if(event.target===this)closeModal()"><div id="mo"></div></div><div id="toasts"></div>
+<script>
+let S = null, tab = 'dash', F = { q: '', st: '', cl: '' };
+const $ = s => document.querySelector(s);
+const money = v => (+v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmt = d => d.split('-').reverse().join('/');
+const dt = t => new Date(t).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+const addDays = (d, n) => { const x = new Date(d + 'T12:00:00Z'); x.setUTCDate(x.getUTCDate() + n); return x.toISOString().slice(0, 10); };
+const cl = id => S.clients.find(c => c.id === id), cname = id => cl(id)?.name || '—';
+const price = a => +S.settings['price' + a.duration] || 0;
+const IC = { dash: 'M3 13h8V3H3zm0 8h8v-6H3zm10 0h8V11h-8zm0-18v6h8V3z', ads: 'M4 5h16v11H4zM8 20h8M12 16v4', clients: 'M16 11a4 4 0 1 0-8 0m-4 9a8 8 0 0 1 16 0', devices: 'M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm5 17h.01', team: 'M17 20v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2m18 0v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8M10 10a4 4 0 1 0 0-8 4 4 0 0 0 0 8z', cfg: 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm7.4-3a7.4 7.4 0 0 0-.1-1.4l2-1.6-2-3.4-2.4 1a7 7 0 0 0-2.4-1.4L14 2h-4l-.5 2.6a7 7 0 0 0-2.4 1.4l-2.4-1-2 3.4 2 1.6a7.400 7.400 0 0 0 0 2.800l-2 1.600 2 3.400 2.400-1a7 7 0 0 0 2.400 1.400L10 22h4l.5-2.600a7 7 0 0 0 2.400-1.400l2.400 1 2-3.400-2-1.600c.1-.5.100-.9.100-1.400z' };
+const svg = k => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="${IC[k]}"/></svg>`;
+
+function toast(m, err) { const e = document.createElement('div'); e.className = 'toast' + (err ? ' err' : ''); e.textContent = m; $('#toasts').append(e); setTimeout(() => e.remove(), 3500); }
+async function api(url, method = 'GET', body) {
+  const o = { method, headers: {} };
+  if (body) { o.headers['Content-Type'] = 'application/json'; o.body = JSON.stringify(body); }
+  const r = await fetch(url, o);
+  if (r.status === 401 && !url.includes('login')) { showLogin(); throw 0; }
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) { toast(j.error || 'Erro', true); throw j; } return j;
+}
+const act = async (fn, msg) => { try { await fn(); if (msg) toast(msg); await load(); } catch { } };
+function showLogin() { $('#login').style.display = 'flex'; $('#app').hidden = true; }
+async function login(e) {
+  e.preventDefault(); $('#lb').disabled = true; $('#le').textContent = '';
+  try { await api('/api/login', 'POST', { user: $('#u').value, pass: $('#p').value }); $('#login').style.display = 'none'; await load(); }
+  catch (x) { $('#le').textContent = x?.error || 'Usuário ou senha inválidos'; } $('#lb').disabled = false;
+}
+async function logout() { await api('/api/logout', 'POST'); showLogin(); }
+async function load() {
+  try { S = await api('/api/admin/state'); } catch { return; }
+  $('#login').style.display = 'none'; $('#app').hidden = false; render();
+}
+const TABS = { dash: 'Resumo', ads: 'Anúncios', clients: 'Clientes', devices: 'Tablets', team: 'Equipe', cfg: 'Configurações' };
+function go(t) { tab = t; render(); scrollTo(0, 0); }
+function render() {
+  const exp = S.ads.filter(a => a.status === 'vencido' || (a.status === 'ativo' && a.daysLeft <= 5)).length, off = S.devices.filter(d => !d.online).length;
+  const badge = { ads: exp, devices: off };
+  $('#side').innerHTML = `<img class="logo" src="/logo.webp" alt="ValleMídia">` + Object.entries(TABS).filter(([k]) => k !== 'team' || S.me.role === 'owner')
+    .map(([k, v]) => `<button class="nb ${k === tab ? 'on' : ''}" onclick="go('${k}')">${svg(k === 'dash' ? 'dash' : k)}<span class="tx">${v}</span>${badge[k] ? `<span class="badge">${badge[k]}</span>` : ''}</button>`).join('')
+    + `<div class="me"><b>${esc(S.me.user)}</b><span>${S.me.role === 'owner' ? 'Dono' : 'Administrador'}</span><br><button class="sm" style="margin-top:8px;width:100%" onclick="logout()">Sair</button></div>`;
+  $('#main').innerHTML = views[tab]();
+}
+function openModal(html, wide) { $('#mo').className = wide ? 'wide' : ''; $('#mo').innerHTML = html; $('#ov').classList.add('on'); }
+function closeModal() { $('#ov').classList.remove('on'); $('#mo').innerHTML = ''; }
+const status = a => a.status === 'ativo' && a.daysLeft <= 5 ? `<span class="tag t-soon">vence em ${a.daysLeft}d</span>` : `<span class="tag t-${a.status}">${a.status}</span>`;
+const media = (a, c = 'thumb') => a.type === 'video' ? `<video class="${c}" src="${a.url}#t=0.5" muted preload="metadata" onclick="preview('${a.id}')"></video>` : `<img class="${c}" src="${a.url}" onclick="preview('${a.id}')" loading="lazy">`;
+function wa(a) {
+  const c = cl(a.clientId), n = (c?.contact || '').replace(/\D/g, ''); if (n.length < 10) return '';
+  const msg = a.status === 'vencido' ? `Olá ${c.name}! Seu anúncio "${a.title}" na ValleMídia venceu em ${fmt(a.end)} e saiu do ar. Deseja renovar?` : `Olá ${c.name}! Seu anúncio "${a.title}" na ValleMídia vence em ${fmt(a.end)}. Deseja renovar para continuar no ar?`;
+  return `<a href="https://wa.me/${n.length <= 11 ? '55' + n : n}?text=${encodeURIComponent(msg)}" target="_blank"><button class="sm" title="Cobrar/avisar no WhatsApp">💬</button></a>`;
+}
+const renewBtn = a => `<button class="p sm" onclick="renewAsk('${a.id}')">Renovar</button>`;
+
+const views = {
+  dash() {
+    const live = S.ads.filter(a => a.status === 'ativo'), soon = live.filter(a => a.daysLeft <= 7), venc = S.ads.filter(a => a.status === 'vencido');
+    const on = S.devices.filter(d => d.online).length, off = S.devices.filter(d => !d.online);
+    const today = S.daily[S.daily.length - 1].n, mx = Math.max(1, ...S.daily.map(x => x.n));
+    const need = [...venc, ...soon].sort((a, b) => a.end.localeCompare(b.end));
+    return `<div class="top"><h1>Resumo</h1><button class="p" onclick="adForm()">+ Novo anúncio</button></div>
+    <div class="kpis">
+     <div class="kpi good"><div class="v">${live.length}</div><div class="l">anúncios no ar</div></div>
+     <div class="kpi ${soon.length ? 'warn' : ''}"><div class="v">${soon.length}</div><div class="l">vencem em até 7 dias</div></div>
+     <div class="kpi ${venc.length ? 'bad' : ''}"><div class="v">${venc.length}</div><div class="l">vencidos (fora do ar)</div></div>
+     <div class="kpi ${off.length ? 'warn' : 'good'}"><div class="v">${on}/${S.devices.length}</div><div class="l">tablets online</div></div>
+     <div class="kpi"><div class="v">${money(S.revenue)}</div><div class="l">receita mensal ativa</div></div>
+     <div class="kpi"><div class="v">${today.toLocaleString('pt-BR')}</div><div class="l">exibições hoje</div></div></div>
+    <div class="cols"><div>
+     <div class="card"><h3>Exibições nos últimos 14 dias</h3><div class="bars">${S.daily.map(x => `<div class="bar" title="${fmt(x.d)}: ${x.n}"><span>${x.n || ''}</span><i style="height:${x.n / mx * 100}%"></i><span>${x.d.slice(8)}</span></div>`).join('')}</div></div>
+     <div class="card"><h3>⏰ Renovações pendentes</h3>${need.length ? need.map(a => `<div class="item">${media(a)}<div class="grow"><b>${esc(a.title)}</b><div class="m">${esc(cname(a.clientId))} · ${a.duration}s · ${a.status === 'vencido' ? 'venceu em ' : 'vence em '}${fmt(a.end)}</div></div>${status(a)}${wa(a)}${renewBtn(a)}</div>`).join('') : '<div class="empty">Tudo em dia 🎉</div>'}</div></div>
+    <div><div class="card"><h3>📵 Tablets offline</h3>${off.length ? off.map(d => `<div class="item"><span class="dot off"></span><div class="grow"><b>${esc(d.name)}</b><div class="m">${d.lastSeen ? 'visto ' + dt(d.lastSeen) : 'nunca conectou'}</div></div></div>`).join('') : '<div class="empty">Todos online ✔</div>'}</div>
+     <div class="card"><h3>Atividade recente</h3>${S.log.slice(0, 8).map(l => `<div class="item"><div class="grow"><div style="font-size:13.5px">${esc(l.msg)}</div><div class="m">${esc(l.user)} · ${dt(l.t)}</div></div></div>`).join('') || '<div class="empty">Sem atividade</div>'}</div></div></div>`;
+  },
+  ads() {
+    return `<div class="top"><h1>Anúncios</h1><button onclick="csv()">⬇ Exportar CSV</button><button class="p" onclick="adForm()">+ Novo anúncio</button></div>
+    <div class="card"><div class="row"><input class="grow" placeholder="🔍 Buscar anúncio ou cliente…" value="${esc(F.q)}" oninput="F.q=this.value;rows()">
+      <select style="width:auto" onchange="F.st=this.value;rows()">${[['', 'Todos os status'], ['ativo', 'No ar'], ['soon', 'Vencendo (≤5d)'], ['vencido', 'Vencidos'], ['pausado', 'Pausados'], ['agendado', 'Agendados']].map(([v, l]) => `<option value="${v}" ${F.st === v ? 'selected' : ''}>${l}</option>`).join('')}</select>
+      <select style="width:auto" onchange="F.cl=this.value;rows()"><option value="">Todos os clientes</option>${S.clients.map(c => `<option value="${c.id}" ${F.cl === c.id ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</select></div></div>
+    <div class="card tw"><table><thead><tr><th></th><th>Anúncio</th><th>Cliente</th><th>Tempo</th><th>Período</th><th>Status</th><th>Exib. 30d</th><th></th></tr></thead><tbody id="adrows">${adRows()}</tbody></table></div>`;
+  },
+  clients() {
+    return `<div class="top"><h1>Clientes</h1><button class="p" onclick="clientForm()">+ Novo cliente</button></div>
+    <div class="card tw"><table><thead><tr><th>Cliente</th><th>WhatsApp / contato</th><th>Anúncios no ar</th><th>Valor mensal</th><th></th></tr></thead><tbody>${S.clients.map(c => {
+      const ads = S.ads.filter(a => a.clientId === c.id), live = ads.filter(a => a.status === 'ativo'), n = (c.contact || '').replace(/\D/g, '');
+      return `<tr><td><b>${esc(c.name)}</b>${c.notes ? `<div class="m">${esc(c.notes)}</div>` : ''}</td><td>${esc(c.contact)}</td><td>${live.length} <span class="m">/ ${ads.length}</span></td><td>${money(live.reduce((s, a) => s + price(a), 0))}</td>
+      <td class="row">${n.length >= 10 ? `<a href="https://wa.me/${n.length <= 11 ? '55' + n : n}" target="_blank"><button class="sm">💬</button></a>` : ''}<button class="sm" onclick="clientForm('${c.id}')">Editar</button><button class="sm d" onclick="del('clients','${c.id}','${esc(c.name)}')">Excluir</button></td></tr>`;
+    }).join('') || '<tr><td colspan=5 class="empty">Nenhum cliente cadastrado.</td></tr>'}</tbody></table></div>`;
+  },
+  devices() {
+    return `<div class="top"><h1>Tablets</h1><button class="p" onclick="devForm()">+ Novo tablet</button></div>
+    <div class="card m" style="margin-bottom:16px">Em cada tablet: abra o link do player <b>uma vez</b> no Chrome, toque em ⋮ → “Adicionar à tela inicial” e mantenha a tela sempre ligada. O tablet guarda o link e baixa os anúncios para tocar mesmo sem internet.</div>
+    <div class="grid3">${S.devices.map(d => { const url = `${location.origin}/player.html?d=${d.token}`; const n = S.ads.filter(a => a.status === 'ativo' && (!a.devices?.length || a.devices.includes(d.id))).length; return `<div class="dev">
+      <div class="row"><span class="dot ${d.online ? 'on' : 'off'}"></span><b class="grow">${esc(d.name)}</b><span class="tag ${d.online ? 't-ativo' : 't-vencido'}">${d.online ? 'online' : 'offline'}</span></div>
+      <div class="m" style="margin-top:8px">${d.lastSeen ? 'Último sinal: ' + dt(d.lastSeen) : 'Nunca conectou'}<br>${n} anúncios no ar · ${d.playsToday} exibições hoje</div>
+      <code>${url}</code><div class="row"><button class="sm p" onclick="copy('${url}')">Copiar link</button><a href="${url}" target="_blank"><button class="sm">Abrir</button></a>
+      <button class="sm" onclick="devForm('${d.id}')">Renomear</button><button class="sm" onclick="newToken('${d.id}')" title="Gera novo link e desconecta o atual">🔄</button><button class="sm d" onclick="del('devices','${d.id}','${esc(d.name)}')">✕</button></div></div>`; }).join('') || '<div class="empty card" style="grid-column:1/-1">Nenhum tablet cadastrado.</div>'}</div>`;
+  },
+  team() {
+    return `<div class="top"><h1>Equipe</h1><button class="p" onclick="teamForm()">+ Novo usuário</button></div>
+    <div class="card tw"><table><thead><tr><th>Usuário</th><th>Perfil</th><th></th></tr></thead><tbody>${S.admins.map(a => `<tr><td><b>${esc(a.user)}</b> ${a.id === S.me.id ? '<span class="m">(você)</span>' : ''}</td><td>${a.role === 'owner' ? 'Dono — acesso total' : 'Administrador'}</td>
+      <td class="row"><button class="sm" onclick="pwForm('${a.id}','${esc(a.user)}')">Redefinir senha</button>${a.id !== S.me.id ? `<button class="sm d" onclick="del('admins','${a.id}','${esc(a.user)}')">Excluir</button>` : ''}</td></tr>`).join('')}</tbody></table></div>
+    <div class="card m"><b>Dono:</b> tudo, incluindo equipe, preços e backup. <b>Administrador:</b> anúncios, clientes e tablets.</div>`;
+  },
+  cfg() {
+    const own = S.me.role === 'owner';
+    return `<div class="top"><h1>Configurações</h1></div><div class="cols"><div>
+    ${own ? `<div class="card"><h3>Preços mensais</h3><form onsubmit="saveCfg(event)" class="fg"><label class="f">Anúncio de 15s (R$)<input name="price15" type="number" step="0.01" min="0" value="${S.settings.price15}"></label>
+     <label class="f">Anúncio de 30s (R$)<input name="price30" type="number" step="0.01" min="0" value="${S.settings.price30}"></label><div class="full"><button class="p">Salvar</button> <span class="m">Usado para calcular a receita mensal.</span></div></form></div>` : ''}
+    <div class="card"><h3>Minha senha</h3><form onsubmit="myPw(event)" class="fg"><label class="f full">Senha atual<input type="password" name="old" required></label><label class="f full">Nova senha (mín. 6)<input type="password" name="pass" minlength="6" required></label><div class="full"><button class="p">Alterar senha</button></div></form></div>
+    ${own ? `<div class="card"><h3>Backup</h3><p class="m" style="margin-top:0">Baixe uma cópia dos dados (anúncios, clientes, tablets, estatísticas). As imagens/vídeos ficam na pasta <b>data/uploads</b> do servidor.</p><a href="/api/admin/backup"><button>⬇ Baixar backup</button></a></div>` : ''}</div>
+    <div class="card"><h3>Histórico de ações</h3>${S.log.map(l => `<div class="item"><div class="grow"><div style="font-size:13.5px">${esc(l.msg)}</div><div class="m">${esc(l.user)} · ${dt(l.t)}</div></div></div>`).join('') || '<div class="empty">Vazio</div>'}</div></div>`;
+  }
+};
+function filtered() {
+  const q = F.q.toLowerCase();
+  return S.ads.filter(a => (!q || (a.title + cname(a.clientId)).toLowerCase().includes(q)) && (!F.cl || a.clientId === F.cl)
+    && (!F.st || (F.st === 'soon' ? a.status === 'ativo' && a.daysLeft <= 5 : a.status === F.st))).sort((a, b) => a.end.localeCompare(b.end));
+}
+function adRows() {
+  return filtered().map(a => `<tr><td>${media(a)}</td><td><b>${esc(a.title)}</b></td><td>${esc(cname(a.clientId))}</td><td>${a.duration}s</td>
+  <td class="m">${fmt(a.start)} → <b style="color:var(--t)">${fmt(a.end)}</b></td><td>${status(a)}</td><td>${a.plays30.toLocaleString('pt-BR')}</td>
+  <td><div class="row">${renewBtn(a)}${wa(a)}<button class="sm" onclick="adForm('${a.id}')">Editar</button><button class="sm" onclick="act(()=>api('/api/admin/ads/${a.id}','PUT',{active:${!a.active}}),'${a.active ? 'Pausado' : 'Ativado'}')">${a.active ? 'Pausar' : 'Ativar'}</button><button class="sm d" onclick="del('ads','${a.id}','${esc(a.title)}')">✕</button></div></td></tr>`).join('') || '<tr><td colspan=8 class="empty">Nenhum anúncio encontrado.</td></tr>';
+}
+const rows = () => { $('#adrows').innerHTML = adRows(); };
+function preview(id) { const a = S.ads.find(x => x.id === id); openModal(`<h2>${esc(a.title)}</h2><div style="background:#000;border-radius:12px;overflow:hidden;text-align:center">${a.type === 'video' ? `<video src="${a.url}" controls autoplay muted style="max-width:100%;max-height:60vh"></video>` : `<img src="${a.url}" style="max-width:100%;max-height:60vh">`}</div><div class="row" style="margin-top:14px;justify-content:flex-end"><button onclick="closeModal()">Fechar</button></div>`, true); }
+const devChecks = sel => S.devices.length ? `<div class="chk">${S.devices.map(d => `<label><input type="checkbox" name="dv" value="${d.id}" ${sel?.includes(d.id) ? 'checked' : ''}>${esc(d.name)}</label>`).join('')}</div>` : '<span class="m">Nenhum tablet cadastrado</span>';
+function adForm(id) {
+  const a = id ? S.ads.find(x => x.id === id) : null;
+  if (!S.clients.length) { toast('Cadastre um cliente primeiro', true); go('clients'); return; }
+  openModal(`<h2>${a ? 'Editar anúncio' : 'Novo anúncio'}</h2><form id="af" class="fg" onsubmit="saveAd(event,'${id || ''}')">
+   <label class="f">Cliente<select name="clientId" required>${S.clients.map(c => `<option value="${c.id}" ${a?.clientId === c.id ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</select></label>
+   <label class="f">Título<input name="title" required value="${esc(a?.title)}" placeholder="Ex.: Promoção de verão"></label>
+   <label class="f">Tempo de exposição<select name="duration"><option value="15" ${a?.duration === 15 ? 'selected' : ''}>15 segundos${S.settings.price15 ? ' · ' + money(S.settings.price15) + '/mês' : ''}</option><option value="30" ${a?.duration === 30 ? 'selected' : ''}>30 segundos${S.settings.price30 ? ' · ' + money(S.settings.price30) + '/mês' : ''}</option></select></label>
+   <div></div>
+   <label class="f">Início<input type="date" name="start" value="${a?.start || S.today}" required></label>
+   <label class="f">Fim (pago até)<input type="date" name="end" value="${a?.end || addDays(S.today, 30)}" required></label>
+   <div class="full"><div class="m" style="margin-bottom:6px">Exibir em quais tablets? <b>(nenhum marcado = todos)</b></div>${devChecks(a?.devices)}</div>
+   ${a ? '' : `<div class="full"><div class="drop" id="dz" onclick="fi.click()" ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="event.preventDefault();this.classList.remove('over');fi.files=event.dataTransfer.files;pick()">
+     <div id="dzt">📁 Arraste a imagem/vídeo aqui ou clique para escolher<br><span class="m">Ideal: tela 16:10 ou 16:9 · imagens JPG/PNG · vídeos MP4 até 300 MB</span></div><div id="pv"></div></div>
+     <input type="file" id="fi" accept="image/*,video/*" hidden onchange="pick()"><div class="prog" id="pg"><i></i></div></div>`}
+   <div class="full row" style="justify-content:flex-end"><button type="button" onclick="closeModal()">Cancelar</button><button class="p" id="sv">${a ? 'Salvar' : 'Enviar anúncio'}</button></div></form>`);
+}
+function pick() {
+  const f = $('#fi').files[0]; if (!f) return; const u = URL.createObjectURL(f);
+  $('#dzt').innerHTML = '✔ ' + esc(f.name) + ' <span class="m">(' + (f.size / 1048576).toFixed(1) + ' MB)</span>';
+  $('#pv').innerHTML = f.type.startsWith('video') ? `<video src="${u}" style="max-height:130px;margin-top:10px;border-radius:8px" muted></video>` : `<img src="${u}" style="max-height:130px;margin-top:10px;border-radius:8px">`;
+}
+function saveAd(e, id) {
+  e.preventDefault(); const f = e.target, dv = [...f.querySelectorAll('[name=dv]:checked')].map(x => x.value);
+  if (f.end.value < f.start.value) return toast('A data final é anterior à inicial', true);
+  if (id) return act(async () => { await api('/api/admin/ads/' + id, 'PUT', { clientId: f.clientId.value, title: f.title.value, duration: f.duration.value, start: f.start.value, end: f.end.value, devices: dv }); closeModal(); }, 'Anúncio salvo');
+  const file = $('#fi').files[0]; if (!file) return toast('Escolha o arquivo do anúncio', true);
+  const meta = { clientId: f.clientId.value, title: f.title.value, duration: f.duration.value, start: f.start.value, end: f.end.value, devices: dv };
+  const sv = $('#sv'), pg = $('#pg'), fail = m => { toast(m, true); sv.disabled = false; sv.textContent = 'Enviar anúncio'; };
+  sv.disabled = true; pg.style.display = 'block';
+  const prog = p => { $('#pg i').style.width = p + '%'; sv.textContent = Math.round(p) + '%'; };
+  const finish = async up => { try { await api('/api/admin/ads', 'POST', { ...meta, url: up.url, contentType: up.contentType }); closeModal(); toast('Anúncio enviado e no ar'); load(); } catch { fail('Falha ao salvar o anúncio'); } };
+  if (S.blob === 'vercel') {
+    import('https://esm.sh/@vercel/blob@2.9.0/client').then(({ upload }) => upload('anuncios/' + file.name, file, { access: 'public', handleUploadUrl: '/api/blob', multipart: true, onUploadProgress: e => prog(e.percentage) }))
+      .then(b => finish({ url: b.url, contentType: file.type })).catch(e => fail('Falha no envio: ' + (e.message || e)));
+  } else {
+    const fd = new FormData(); fd.append('file', file); const x = new XMLHttpRequest(); x.open('POST', '/api/admin/upload');
+    x.upload.onprogress = ev => prog(ev.loaded / ev.total * 100);
+    x.onload = () => x.status === 200 ? finish(JSON.parse(x.responseText)) : fail(JSON.parse(x.responseText || '{}').error || 'Falha no envio');
+    x.onerror = () => fail('Falha de conexão'); x.send(fd);
+  }
+}
+function renewAsk(id) {
+  const a = S.ads.find(x => x.id === id), base = a.end > S.today ? a.end : S.today;
+  openModal(`<h2>Renovar “${esc(a.title)}”</h2><p class="m">Cliente: ${esc(cname(a.clientId))} · ${a.duration}s · ${money(price(a))}/mês<br>Vence hoje em: <b>${fmt(a.end)}</b>${a.end < S.today ? ' (já vencido — a contagem recomeça de hoje)' : ''}</p>
+   <div class="row" style="margin:16px 0">${[30, 60, 90, 180].map(d => `<button class="p" onclick="doRenew('${id}',${d})">+${d} dias<br><small>até ${fmt(addDays(base, d))}</small></button>`).join('')}</div>
+   <div class="row"><input type="number" id="cd" min="1" placeholder="Outro nº de dias" style="width:170px"><button onclick="doRenew('${id}',+cd.value)">Renovar</button><span class="grow"></span><button onclick="closeModal()">Cancelar</button></div>`);
+}
+const doRenew = (id, d) => d > 0 && act(async () => { await api(`/api/admin/ads/${id}/renew`, 'POST', { days: d }); closeModal(); }, 'Renovado! Anúncio no ar');
+function clientForm(id) {
+  const c = id ? cl(id) : {};
+  openModal(`<h2>${id ? 'Editar' : 'Novo'} cliente</h2><form class="fg" onsubmit="event.preventDefault();act(async()=>{await api('/api/admin/clients${id ? '/' + id : ''}','${id ? 'PUT' : 'POST'}',Object.fromEntries(new FormData(this)));closeModal()},'Cliente salvo')">
+   <label class="f full">Nome / empresa<input name="name" required value="${esc(c.name)}"></label><label class="f full">WhatsApp (com DDD)<input name="contact" value="${esc(c.contact)}" placeholder="(11) 99999-9999"></label>
+   <label class="f full">Observações<textarea name="notes" rows="2">${esc(c.notes)}</textarea></label><div class="full row" style="justify-content:flex-end"><button type="button" onclick="closeModal()">Cancelar</button><button class="p">Salvar</button></div></form>`);
+}
+function devForm(id) {
+  const d = id ? S.devices.find(x => x.id === id) : {};
+  openModal(`<h2>${id ? 'Renomear' : 'Novo'} tablet</h2><form onsubmit="event.preventDefault();act(async()=>{await api('/api/admin/devices${id ? '/' + id : ''}','${id ? 'PUT' : 'POST'}',Object.fromEntries(new FormData(this)));closeModal()},'Tablet salvo')">
+   <label class="f">Veículo / placa<input name="name" required value="${esc(d.name)}" placeholder="Ex.: Carro 12 — ABC1D23"></label><div class="row" style="justify-content:flex-end;margin-top:14px"><button type="button" onclick="closeModal()">Cancelar</button><button class="p">Salvar</button></div></form>`);
+}
+function teamForm() {
+  openModal(`<h2>Novo usuário</h2><form class="fg" onsubmit="event.preventDefault();act(async()=>{await api('/api/admin/admins','POST',Object.fromEntries(new FormData(this)));closeModal()},'Usuário criado')">
+   <label class="f">Usuário<input name="user" required></label><label class="f">Senha (mín. 6)<input name="pass" type="password" minlength="6" required></label>
+   <label class="f full">Perfil<select name="role"><option value="admin">Administrador</option><option value="owner">Dono (acesso total)</option></select></label>
+   <div class="full row" style="justify-content:flex-end"><button type="button" onclick="closeModal()">Cancelar</button><button class="p">Criar</button></div></form>`);
+}
+function pwForm(id, u) {
+  openModal(`<h2>Redefinir senha de ${esc(u)}</h2><form onsubmit="event.preventDefault();act(async()=>{await api('/api/admin/admins/${id}/password','POST',{pass:this.pass.value});closeModal()},'Senha redefinida')">
+   <label class="f">Nova senha (mín. 6)<input name="pass" type="password" minlength="6" required></label><div class="row" style="justify-content:flex-end;margin-top:14px"><button type="button" onclick="closeModal()">Cancelar</button><button class="p">Salvar</button></div></form>`);
+}
+function del(what, id, name) {
+  openModal(`<h2>Excluir?</h2><p>Excluir <b>${esc(name)}</b>? ${what === 'ads' ? 'O arquivo também será apagado.' : ''} Esta ação não pode ser desfeita.</p><div class="row" style="justify-content:flex-end"><button onclick="closeModal()">Cancelar</button><button class="p" style="background:var(--e);color:#fff" onclick="act(async()=>{await api('/api/admin/${what}/${id}','DELETE');closeModal()},'Excluído')">Excluir</button></div>`);
+}
+const newToken = id => openModal(`<h2>Gerar novo link?</h2><p>O link atual deixa de funcionar e o tablet precisará abrir o novo link.</p><div class="row" style="justify-content:flex-end"><button onclick="closeModal()">Cancelar</button><button class="p" onclick="act(async()=>{await api('/api/admin/devices/${id}/token','POST');closeModal()},'Novo link gerado')">Gerar</button></div>`);
+const copy = t => navigator.clipboard.writeText(t).then(() => toast('Link copiado'), () => prompt('Copie:', t));
+const saveCfg = e => { e.preventDefault(); act(() => api('/api/admin/settings', 'PUT', Object.fromEntries(new FormData(e.target))), 'Preços salvos'); };
+const myPw = e => { e.preventDefault(); const f = e.target; act(async () => { await api('/api/admin/password', 'POST', { old: f.old.value, pass: f.pass.value }); f.reset(); }, 'Senha alterada'); };
+function csv() {
+  const r = [['Cliente', 'Anúncio', 'Tempo(s)', 'Início', 'Fim', 'Status', 'Valor mensal', 'Exibições 30d']].concat(filtered().map(a => [cname(a.clientId), a.title, a.duration, fmt(a.start), fmt(a.end), a.status, price(a), a.plays30]));
+  const b = new Blob(['﻿' + r.map(x => x.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(';')).join('\r\n')], { type: 'text/csv' });
+  const l = document.createElement('a'); l.href = URL.createObjectURL(b); l.download = 'anuncios-' + S.today + '.csv'; l.click();
+}
+document.addEventListener('keydown', e => e.key === 'Escape' && closeModal());
+load().then(() => { if (!S) showLogin(); });
+setInterval(() => { if (S && !$('#ov').classList.contains('on') && !['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement.tagName)) load(); }, 60000);
+</script></body></html>
