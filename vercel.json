@@ -1,1 +1,10 @@
-{ "rewrites": [{ "source": "/api/(.*)", "destination": "/api" }, { "source": "/admin", "destination": "/admin.html" }] }
+{
+  "framework": null,
+  "buildCommand": "",
+  "installCommand": "npm install",
+  "outputDirectory": "public",
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api" },
+    { "source": "/admin", "destination": "/admin.html" }
+  ]
+}
