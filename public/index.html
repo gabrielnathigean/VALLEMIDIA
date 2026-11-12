@@ -155,12 +155,13 @@ p{margin:0}
 .sim{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:48px;align-items:start}
 .stage{position:relative;aspect-ratio:410/231;border-radius:var(--r-lg);overflow:hidden;background:#17110B;box-shadow:0 24px 56px rgba(23,17,11,.3)}
 .stage>img{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:cover}
-#screen{position:absolute;left:0;top:0;width:720px;height:500px;transform-origin:0 0;overflow:hidden;container-type:inline-size;visibility:hidden;filter:blur(.35px)}
-#screen .ad{position:absolute;inset:0;opacity:0;transition:opacity .7s ease}
-#screen .ad.on{opacity:1}
+#screen{position:absolute;left:0;top:0;width:720px;height:500px;transform-origin:0 0;overflow:hidden;border-radius:14px;container-type:inline-size;visibility:hidden;filter:blur(.35px)}
+#screen .ad{position:absolute;inset:0;opacity:0;transform:scale(1.04);transition:opacity .6s ease,transform .9s cubic-bezier(.2,.7,.2,1)}
+#screen .ad.on{opacity:1;transform:none}
+#screen .ad.out{opacity:0;transform:scale(.98);transition:opacity .45s ease,transform .45s ease}
 #screen .in{position:absolute;left:6%;top:9%;width:88%;height:80%;display:flex;flex-direction:column;justify-content:space-between}
 #screen .br{font-size:4.2cqw;font-weight:700;letter-spacing:.1em;text-transform:uppercase;opacity:.9}
-#screen .hd{font-family:var(--font-h);font-weight:800;font-size:11.5cqw;line-height:1.04;letter-spacing:-.02em;overflow:hidden}
+#screen .hd{font-family:var(--font-h);font-weight:800;font-size:11.5cqw;line-height:1.08;letter-spacing:-.02em;padding:0 0 1.6cqw;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;line-clamp:3;overflow:hidden}
 #screen .ft{display:flex;align-items:flex-end;justify-content:space-between;gap:2cqw}
 #screen .pl{font-size:4.4cqw;font-weight:700;padding:2cqw 3.6cqw;border-radius:99cqw;white-space:nowrap}
 #screen .qr{width:13cqw;height:13cqw;border-radius:1.4cqw;display:grid;place-items:center;font-size:3.4cqw;font-weight:800;flex:0 0 auto}
@@ -637,7 +638,7 @@ footer a:hover{color:var(--accent)}
 
   // ====== SIMULADOR: anúncio dentro do tablet ======
   // Cantos da tela do tablet na foto (410x231), medidos na imagem: TL, TR, BR, BL
-  var QUAD = [[134.3, 70.0], [314.5, 63.8], [313.8, 192.5], [130.0, 183.0]];
+  var QUAD = [[135.8, 71.4], [313.0, 65.4], [312.2, 190.8], [131.8, 181.4]];
   var IMG_W = 410, SW = 720, SH = 500;
   var stage = $('#stage'), screen = $('#screen');
 
@@ -675,7 +676,15 @@ footer a:hover{color:var(--accent)}
   function adHTML(a, on) {
     return '<div class="ad' + (on ? ' on' : '') + '" style="background:' + a.bg + ';color:' + a.fg + '"><div class="in"><div class="br">' + esc(a.brand) + '</div><div class="hd">' + esc(a.head) + '</div><div class="ft"><span class="pl" style="background:' + a.pill + ';color:' + a.pf + '">' + esc(a.cta) + '</span><span class="qr" style="background:' + a.fg + ';color:' + a.bg + '">QR</span></div></div></div>';
   }
-  function render(a) { screen.innerHTML = adHTML(a, true) + '<div class="shine"></div>'; }
+  var first = true;
+  function render(a) {
+    if (first || reduce) { screen.innerHTML = adHTML(a, true) + '<div class="shine"></div>'; first = false; return; }
+    var shine = $('.shine', screen), old = $$('.ad', screen);
+    var t = document.createElement('div'); t.innerHTML = adHTML(a, false);
+    var n = t.firstChild; screen.insertBefore(n, shine);
+    old.forEach(function (o) { o.classList.remove('on'); o.classList.add('out'); setTimeout(function () { if (o.parentNode) o.parentNode.removeChild(o); }, 520); });
+    void n.offsetWidth; n.classList.add('on');
+  }
 
   var presetBox = $('#presets'), custom = { brand: 'Sua marca', head: 'Seu anúncio aqui.', cta: 'Anuncie na ValleMídia' }, curPal = 0;
   var presetBtns = ADS.map(function (a, i) {
