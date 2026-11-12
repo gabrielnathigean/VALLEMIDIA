@@ -155,7 +155,7 @@ p{margin:0}
 .sim{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:48px;align-items:start}
 .stage{position:relative;aspect-ratio:410/231;border-radius:var(--r-lg);overflow:hidden;background:#17110B;box-shadow:0 24px 56px rgba(23,17,11,.3)}
 .stage>img{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:cover}
-#screen{position:absolute;left:0;top:0;width:720px;height:500px;transform-origin:0 0;overflow:hidden;border-radius:14px;container-type:inline-size;visibility:hidden;filter:blur(.35px)}
+#screen{position:absolute;left:0;top:0;width:720px;height:500px;transform-origin:0 0;overflow:hidden;border-radius:8px;container-type:inline-size;visibility:hidden;filter:blur(.35px)}
 #screen .ad{position:absolute;inset:0;opacity:0;transform:scale(1.04);transition:opacity .6s ease,transform .9s cubic-bezier(.2,.7,.2,1)}
 #screen .ad.on{opacity:1;transform:none}
 #screen .ad.out{opacity:0;transform:scale(.98);transition:opacity .45s ease,transform .45s ease}
@@ -638,7 +638,8 @@ footer a:hover{color:var(--accent)}
 
   // ====== SIMULADOR: anúncio dentro do tablet ======
   // Cantos da tela do tablet na foto (410x231), medidos na imagem: TL, TR, BR, BL
-  var QUAD = [[135.8, 71.4], [313.0, 65.4], [312.2, 190.8], [131.8, 181.4]];
+  // Medidos por ajuste de reta nas 4 bordas da tela (erro < 0,3 px), com 0,4 px de folga para cobrir o serrilhado
+  var QUAD = [[134.3, 69.8], [314.4, 62.9], [314.5, 193.1], [129.8, 183.9]];
   var IMG_W = 410, SW = 720, SH = 500;
   var stage = $('#stage'), screen = $('#screen');
 
